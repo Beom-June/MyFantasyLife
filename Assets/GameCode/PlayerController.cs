@@ -23,23 +23,29 @@ public class PlayerController : MonoBehaviour
     /// Component
     /// </summary>
     Vector3 moveVec;
-    Vector3 dashVec;                            // 회피시 방향이 전환되지 않도록 제한
+    Vector3 dashVec;                                  // 회피시 방향이 전환되지 않도록 제한
     Rigidbody playerRigidbody;
     Animator animator;
     GameObject nearObj;
     public Weapon equipWeapon;
+    private JoyStick joyStick;
 
     [Header("PlayerState")]
     public int PlayerHP;
     public int Damage;
     public float Speed = 10f;
     public float AttackDelay;                          // 플레이어 공격 딜레이
+    //[SerializeField] VirtualJoyStick virtualJoyStick;
 
 
     void Awake()
     {
         animator = GetComponentInChildren<Animator>();
         playerRigidbody = GetComponent<Rigidbody>();
+    }
+    void Start()
+    {
+        joyStick = GameObject.Find("JoyStickBackGround").GetComponent<JoyStick>();
     }
     void Update()
     {
@@ -51,23 +57,30 @@ public class PlayerController : MonoBehaviour
         PlayerDash();
         PlayerAttack();
         Swap();
+
     }
 
     // 키 입력 함수
     void PlayerInput()
     {
-        HorizentalAxis = Input.GetAxisRaw("Horizontal");
-        VerticalAxis = Input.GetAxisRaw("Vertical");
+        //HorizentalAxis = Input.GetAxisRaw("Horizontal");
+        //VerticalAxis = Input.GetAxisRaw("Vertical");
+
+        // JoyStick Build시 사용
+        HorizentalAxis = joyStick.inputHorizontal();
+        VerticalAxis = joyStick.inputVertical();
 
         playerWalk = Input.GetButton("Walk");                       // Left Ctrl
-        playerJump = Input.GetButtonDown("Jump");                       // Space Bar
-        playerDash = Input.GetButtonDown("Dash");                       // Left Shift
-        AttackDown = Input.GetButtonDown("Fire1");                       // Left Mouse
+        playerJump = Input.GetButtonDown("Jump");                   // Space Bar
+        playerDash = Input.GetButtonDown("Dash");                   // Left Shift
+        AttackDown = Input.GetButtonDown("Fire1");                  // Left Mouse
+
     }
+
 
     #region Player 이동 관련
     // 플레이어 이동 함수
-    void PlayerMove()
+    public void PlayerMove()
     {
         moveVec = new Vector3(HorizentalAxis, 0, VerticalAxis).normalized;
 
@@ -153,7 +166,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-            AttackDelay += Time.deltaTime;
+        AttackDelay += Time.deltaTime;
         isAttackReady = equipWeapon.attackDelay < AttackDelay;
 
         // 추후 무기 변경 넣을 꺼면, && isSwap
