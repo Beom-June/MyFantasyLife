@@ -63,8 +63,8 @@ public class PlayerController : MonoBehaviour
     // 키 입력 함수
     void PlayerInput()
     {
-        //HorizentalAxis = Input.GetAxisRaw("Horizontal");
-        //VerticalAxis = Input.GetAxisRaw("Vertical");
+        HorizentalAxis = Input.GetAxisRaw("Horizontal") ;
+        VerticalAxis = Input.GetAxisRaw("Vertical");
 
         // JoyStick Build시 사용
         HorizentalAxis = joyStick.inputHorizontal();

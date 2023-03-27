@@ -21,7 +21,6 @@ public class JoyStick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPoint
         {
             posInput.x = posInput.x / (JoyStickBackground.rectTransform.sizeDelta.x);
             posInput.y = posInput.y / (JoyStickBackground.rectTransform.sizeDelta.y);
-            Debug.Log("*********");
 
             // normalize
             if(posInput.magnitude > 1.0f)
