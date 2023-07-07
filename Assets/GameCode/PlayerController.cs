@@ -7,45 +7,45 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// Funtion
     /// </summary>
-    float HorizentalAxis;
-    float VerticalAxis;
+    float _horizentalAxis;
+    float _verticalAxis;
 
-    bool playerWalk;                            // 플레이어 걷기 bool 값
-    bool playerJump;                            // 플레이어 점프 bool 값
-    bool playerDash;                            // 플레이어 회피 bool 값
+    bool _playerWalk;                            // 플레이어 걷기 bool 값
+    bool _playerJump;                            // 플레이어 점프 bool 값
+    bool _playerDash;                            // 플레이어 회피 bool 값
 
-    bool AttackDown;                            // 플레이어 공격 bool 값
-    bool isJump;                                // 플레이어 점프 제어 bool 값
-    bool isDash;                                // 플레이어 회피 제어 bool 값
-    bool isAttackReady;                         // 플레이어 공격 준비 bool 값
+    bool _AttackDown;                            // 플레이어 공격 bool 값
+    bool _isJump;                                // 플레이어 점프 제어 bool 값
+    bool _isDash;                                // 플레이어 회피 제어 bool 값
+    bool _isAttackReady;                         // 플레이어 공격 준비 bool 값
 
     /// <summary>
     /// Component
     /// </summary>
-    Vector3 moveVec;
-    Vector3 dashVec;                                  // 회피시 방향이 전환되지 않도록 제한
-    Rigidbody playerRigidbody;
-    Animator animator;
+    Vector3 _moveVec;
+    Vector3 _dashVec;                                  // 회피시 방향이 전환되지 않도록 제한
+    Rigidbody _playerRigidbody;
+    Animator _animator;
     GameObject nearObj;
-    public Weapon equipWeapon;
-    private JoyStick joyStick;
+    [SerializeField] private Weapon _equipWeapon;
+    private JoyStick _joyStick;
 
     [Header("PlayerState")]
-    public int PlayerHP;
-    public int Damage;
-    public float Speed = 10f;
-    public float AttackDelay;                          // 플레이어 공격 딜레이
+    [SerializeField] private int _playerHP;
+    [SerializeField] private int _damage;
+    [SerializeField] private float _speed = 10f;
+    [SerializeField] private float _attackDelay;                          // 플레이어 공격 딜레이
     //[SerializeField] VirtualJoyStick virtualJoyStick;
 
 
     void Awake()
     {
-        animator = GetComponentInChildren<Animator>();
-        playerRigidbody = GetComponent<Rigidbody>();
+        _animator = GetComponentInChildren<Animator>();
+        _playerRigidbody = GetComponent<Rigidbody>();
     }
     void Start()
     {
-        joyStick = GameObject.Find("JoyStickBackGround").GetComponent<JoyStick>();
+        _joyStick = GameObject.Find("BackGround_JoyStick").GetComponent<JoyStick>();
     }
     void Update()
     {
@@ -63,17 +63,17 @@ public class PlayerController : MonoBehaviour
     // 키 입력 함수
     void PlayerInput()
     {
-        HorizentalAxis = Input.GetAxisRaw("Horizontal") ;
-        VerticalAxis = Input.GetAxisRaw("Vertical");
+        _horizentalAxis = Input.GetAxisRaw("Horizontal");
+        _verticalAxis = Input.GetAxisRaw("Vertical");
 
         // JoyStick Build시 사용
-        HorizentalAxis = joyStick.inputHorizontal();
-        VerticalAxis = joyStick.inputVertical();
+        _horizentalAxis = _joyStick.inputHorizontal();
+        _verticalAxis = _joyStick.inputVertical();
 
-        playerWalk = Input.GetButton("Walk");                       // Left Ctrl
-        playerJump = Input.GetButtonDown("Jump");                   // Space Bar
-        playerDash = Input.GetButtonDown("Dash");                   // Left Shift
-        AttackDown = Input.GetButtonDown("Fire1");                  // Left Mouse
+        _playerWalk = Input.GetKeyDown(KeyCode.LeftControl);
+        _playerJump = Input.GetKeyDown(KeyCode.Space);
+        _playerDash = Input.GetKeyDown(KeyCode.LeftShift);
+        _AttackDown = Input.GetButtonDown("Fire1");                  // Left Mouse
 
     }
 
@@ -82,24 +82,26 @@ public class PlayerController : MonoBehaviour
     // 플레이어 이동 함수
     public void PlayerMove()
     {
-        moveVec = new Vector3(HorizentalAxis, 0, VerticalAxis).normalized;
+        _moveVec = new Vector3(_horizentalAxis, 0, _verticalAxis).normalized;
 
-        if (isDash)
+        if (_isDash)
         {
             // 회피 방향이랑 가는 방향이랑 같게
-            moveVec = dashVec;
+            _moveVec = _dashVec;
         }
-        if (playerWalk)
+        if (_playerWalk)
         {
-            transform.position += moveVec * Speed * 0.3f * Time.deltaTime;
+            //transform.position += _moveVec * _speed * 0.3f * Time.deltaTime;
+            _playerRigidbody.velocity = _moveVec * _speed * 0.3f;
         }
         else
         {
-            transform.position += moveVec * Speed * Time.deltaTime;
+            //transform.position += _moveVec * _speed * Time.deltaTime;
+            _playerRigidbody.velocity = _moveVec * _speed;
         }
         //transform.position += moveVec * Speed * (WalkDown ? 0.3f : 1f) * Time.deltaTime;
-        animator.SetBool("isMove", moveVec != Vector3.zero);
-        animator.SetBool("isWalk", playerWalk);
+        _animator.SetBool("isMove", _moveVec != Vector3.zero);
+        _animator.SetBool("isWalk", _playerWalk);
 
     }
 
@@ -107,29 +109,29 @@ public class PlayerController : MonoBehaviour
     void PlayerTurn()
     {
         // 이동 방향 카메라 시점
-        transform.LookAt(transform.position + moveVec);
+        transform.LookAt(transform.position + _moveVec);
     }
 
     // 플레이어 점프 함수
     void PlayerJump()
     {
-        if (playerJump && isJump == false && moveVec == Vector3.zero && isDash == false)
+        if (_playerJump && _isJump == false && _moveVec == Vector3.zero && _isDash == false)
         {
-            playerRigidbody.AddForce(Vector3.up * 5, ForceMode.Impulse);
-            animator.SetTrigger("doJump");
-            isJump = true;
+            _playerRigidbody.AddForce(Vector3.up * 5, ForceMode.Impulse);
+            _animator.SetTrigger("doJump");
+            _isJump = true;
         }
     }
     // 플레이어 회피 함수
     void PlayerDash()
     {
         //if (playerJump && isJump == false && moveVec != Vector3.zero && isDash == false)
-        if (playerDash && isJump == false && moveVec != Vector3.zero && isDash == false)
+        if (_playerDash && _isJump == false && _moveVec != Vector3.zero && _isDash == false)
         {
-            dashVec = moveVec;
-            Speed *= 2;
-            animator.SetTrigger("doDash");
-            isDash = true;
+            _dashVec = _moveVec;
+            _speed *= 2;
+            _animator.SetTrigger("doDash");
+            _isDash = true;
 
             // 회피 빠져나오는 속도
             Invoke("PlayerDashEnd", 0.2f);
@@ -142,8 +144,8 @@ public class PlayerController : MonoBehaviour
     void PlayerDashEnd()
     {
         // 원래 속도로 돌아오게함
-        Speed *= 0.5f;
-        isDash = false;
+        _speed *= 0.5f;
+        _isDash = false;
     }
     #endregion
 
@@ -160,24 +162,24 @@ public class PlayerController : MonoBehaviour
     void PlayerAttack()
     {
         //장비한 무기가 없으면
-        if (equipWeapon == null)
+        if (_equipWeapon == null)
         {
-            Debug.Log(equipWeapon);
+            Debug.Log(_equipWeapon);
             return;
         }
 
-        AttackDelay += Time.deltaTime;
-        isAttackReady = equipWeapon.attackDelay < AttackDelay;
+        _attackDelay += Time.deltaTime;
+        _isAttackReady = _equipWeapon.AttackDelay < _attackDelay;
 
         // 추후 무기 변경 넣을 꺼면, && isSwap
 
-        if (AttackDown && isAttackReady && !isDash)
+        if (_AttackDown && _isAttackReady && !_isDash)
         {
-            equipWeapon.UseWeapon();
-            animator.SetTrigger("doAttack");       // 추후 Animator에서 수정?
+            _equipWeapon.UseWeapon();
+            _animator.SetTrigger("doAttack");       // 추후 Animator에서 수정?
             Debug.Log("**");
             //animator.SetInteger("doAttack", 0);
-            AttackDelay = 0;                        // 딜레이 초기화
+            _attackDelay = 0;                        // 딜레이 초기화
         }
     }
 
@@ -185,7 +187,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Floor")
         {
-            isJump = false;
+            _isDash = false;
         }
     }
 }
