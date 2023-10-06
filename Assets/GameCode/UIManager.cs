@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("Cool Time Check")]
     [SerializeField] private List<Image> _imageCoolTime;
     [SerializeField] private List<bool> _coolTimeCheck;
     private List<UICoolTime> _coolTimeScripts;

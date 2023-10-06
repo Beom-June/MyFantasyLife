@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class UICoolTime : MonoBehaviour
 {
     [SerializeField] private bool _isButtonPressed;
-    [SerializeField] private Image _selectedImage;
+    [SerializeField] private Image _selectedImage;                  //  Filled Image
     [SerializeField] private float _coolTime;
     [SerializeField] private int _buttonIndex;
     private float _fillAmountIncrement = 0.01f;
@@ -37,17 +37,23 @@ public class UICoolTime : MonoBehaviour
 
     public void OnButtonClick()
     {
-        _selectedImage.fillAmount = 0f;
-        _isButtonPressed = true;
-
-        if (_uiManager != null)
+        if (!_isButtonPressed)
         {
-            _uiManager.SetCoolTimeCheck(_buttonIndex, true);
+            _selectedImage.fillAmount = 0f;
+            _isButtonPressed = true;
+
+            if (_uiManager != null)
+            {
+                _uiManager.SetCoolTimeCheck(_buttonIndex, true);
+            }
         }
     }
     public void SetCoolTimeCheck(bool value)
     {
-        _isButtonPressed = value;
+        if (!_isButtonPressed)
+        {
+            _isButtonPressed = value;
+        }
     }
     private void UpdateFillAmount()
     {

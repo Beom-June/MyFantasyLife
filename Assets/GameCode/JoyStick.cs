@@ -29,8 +29,8 @@ public class JoyStick : MonoBehaviour, IDragHandler, IPointerDownHandler, IPoint
             }
 
             // joystick move
-            JoyStickImage.rectTransform.anchoredPosition = new Vector2(posInput.x * (JoyStickBackground.rectTransform.sizeDelta.x / 2),
-                (posInput.y * (JoyStickBackground.rectTransform.sizeDelta.y) / 2));
+            JoyStickImage.rectTransform.anchoredPosition = new Vector2(posInput.x * (JoyStickBackground.rectTransform.sizeDelta.x / 4),
+                (posInput.y * (JoyStickBackground.rectTransform.sizeDelta.y) / 4));
         }
     }
 

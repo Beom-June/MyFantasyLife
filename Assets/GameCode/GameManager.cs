@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
 
     public static int Stage;                        // static으로 전역에서 할 수 있게                                    // 게임 스테이지
 
-    public GameObject Monsters;
     private void Awake()
     {
         gameManager = this;
@@ -26,7 +25,6 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         StartGame();
-        StartMonster();
     }
 
     void Update()
@@ -64,15 +62,4 @@ public class GameManager : MonoBehaviour
         currentGameState = newGameState;
     }
 
-    void StartMonster()
-    {
-        for (int i = 1; i < Monsters.transform.childCount + 1; i++)
-        {
-            if (Stage == i)
-            {
-                Monsters.transform.GetChild(i - 1).gameObject.SetActive(true);
-            }
-            break;
-        }
-    }
 }
